@@ -1,0 +1,256 @@
+clear all;
+close all;
+clc;
+% cd '/home/robot/workspaces/ur5_mpc_ursim/Network_log/20211209_170428'
+f = 1;
+load('0.mat')
+len = length(time_t)
+%% Plot
+step = 200;
+dt = 0.005;
+fig_1 = figure('Name', 'Velocities')
+subplot(3,2,1);
+grid on;
+hold on;
+plot(real_vel(:,1))
+plot(joint_ve(:,6+1))
+title('jv_{1}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(3,2,2);
+grid on
+hold on;
+plot(real_vel(:,2))
+plot(state(:,6+2))
+title('jv_{2}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(3,2,3);
+hold on;
+grid on;
+plot(real_vel(:,3))
+plot(state(:,6+3))
+title('jv_{3}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(3,2,4);
+grid on;
+hold on;
+plot(real_vel(:,4))
+plot(state(:,6+4))
+title('jv_{4}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(3,2,5);
+grid on;
+hold on;
+plot(real_vel(:,5))
+plot(state(:,6+5))
+title('jv_{5}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(3,2,6);
+grid on;
+hold on;
+l1 = plot(real_vel(:,6));
+l2 = plot(state(:,1+6));
+title('jv_{6}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+fig_2 = figure('Name', 'test point velocities 1-5')
+subplot(5,1,1);
+grid on;
+hold on;
+plot(linear_vell_real(:,1))
+plot(linear_vell_given(:,1))
+title('TP_{1}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(5,1,2);
+grid on
+hold on
+plot(linear_vell_real(:,2))
+plot(linear_vell_given(:,2))
+title('TP_{2}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(5,1,3);
+hold on;
+grid on;
+plot(linear_vell_real(:,3))
+plot(linear_vell_given(:,3))
+title('TP_{3}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+
+subplot(5,1,4);
+grid on;
+hold on;
+plot(linear_vell_real(:,4))
+plot(linear_vell_given(:,4))
+title('TP_{4}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+subplot(5,1,5);
+grid on;
+hold on;
+l1 = plot(linear_vell_real(:,5))
+l2 = plot(linear_vell_given(:,5))
+title('TP_{5}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+% Construct a Legend with the data from the sub-plots
+hL = legend([l1,l2],["linear vel real", "linear vel given"]);
+% Programatically move the Legend
+newPosition = [0.8 0.1 0.1 0.1];
+newUnits = 'normalized';
+set(hL,'Position', newPosition,'Units', newUnits);
+
+fig_6 = figure('Name', 'test point velocities 5-10')
+subplot(5,1,1);
+hold on;
+grid on;
+plot(linear_vell_real(:,6))
+plot(linear_vell_given(:,6))
+title('TP_{6}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+xlabel('time, seconds')
+
+subplot(5,1,2);
+hold on;
+grid on;
+plot(linear_vell_real(:,7))
+plot(linear_vell_given(:,7))
+title('TP_{7}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+xlabel('time, seconds')
+
+subplot(5,1,3);
+hold on;
+grid on;
+plot(linear_vell_real(:,8))
+plot(linear_vell_given(:,8))
+title('TP_{8}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+xlabel('time, seconds')
+
+subplot(5,1,4);
+hold on;
+grid on;
+plot(linear_vell_real(:,9))
+plot(linear_vell_given(:,9))
+title('TP_{9}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+xlabel('time, seconds')
+
+subplot(5,1,5);
+hold on;
+grid on;
+l1 = plot(linear_vell_real(:,10))
+l2 = plot(linear_vell_given(:,10))
+title('TP_{10}')
+set(gca,'XTick',0:step:step*len);
+set(gca,'XTickLabel',0:dt*step:len*step*dt);
+xlabel('time, seconds')
+% Construct a Legend with the data from the sub-plots
+hL = legend([l1,l2],["linear vel real", "linear vel given"]);
+% Programatically move the Legend
+newPosition = [0.8 0.1 0.1 0.1];
+newUnits = 'normalized';
+set(hL,'Position', newPosition,'Units', newUnits);
+
+
+%% Calculation test points
+start = 1
+v_s = zeros(10,9);
+t_s = zeros(10,9);
+for iter = 1:50
+    % robot starts to move:
+    for p = 1:10
+        for i=start:len
+            if linear_vell_real(i,p)>0 && linear_vell_given(i,p)>0
+                n = i;
+                break;
+            end
+        end
+
+        % robot stops:
+        for i = n:len
+            if linear_vell_given(i,p)==0
+                s = i;
+                break;
+            end
+        end 
+
+        reference = linear_vell_given(n,p)
+        epsilon = reference*0.02;
+        for t = s:-1:n
+            if reference-epsilon>linear_vell_real(t,p) || reference+epsilon<linear_vell_real(t,p)
+                t_s(p,iter) = t;
+                v_s(p,iter) = linear_vell_real(t,p);
+                break;
+            end
+        end
+    end
+    start = s;
+end
+%% Calculation joints
+start = 1
+v_s = zeros(6,50);
+t_s = zeros(6,50);
+for p = 2
+    % robot starts to move:
+    for iter=1
+        for i=start:len
+            if given_joint_vels(i,p)>0
+                n = i
+                break;
+            end
+        end
+
+        % robot stops:
+        for i = n:len
+            if given_joint_vels(i,p)==0
+                s = i
+                break;
+            end
+        end 
+
+        reference = given_joint_vels(n,p)
+        epsilon = reference*0.02;
+        for t = s:-1:n
+            if reference-epsilon>joint_vels(t,p) || reference+epsilon<joint_vels(t,p)
+                t_s(p,iter) = time(s)-time(t)
+                v_s(p,iter) = joint_vels(t,p)
+                break;
+            end
+        end
+        start = s;
+    end
+    start = 0
+end
+%% Plot Velocity vs Time to stop
+figure_5 = figure('Name','Velocity vs Time')
+hold on
+plot(t_s(1,:), v_s(1,:), '.');
+
+for i = 1:6
+    for k = 1:50
+        acc(i,k)=v_s(i,k)/t_s(i,k);
+    end
+end
+
+
+
