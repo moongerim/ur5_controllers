@@ -1,0 +1,8 @@
+prefix=/home/robot/workspaces/ur5_controllers/devel
+
+Name: ur5_rviz
+Description: Description of ur5_rviz
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

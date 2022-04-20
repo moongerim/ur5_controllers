@@ -1,0 +1,8 @@
+prefix=/home/robot/workspaces/ur5_controllers/install
+
+Name: test_acceleration
+Description: Description of test_acceleration
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -ltest_acceleration
+Requires: geometry_msgs roscpp rospy std_msgs

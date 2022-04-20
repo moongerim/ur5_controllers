@@ -1,0 +1,8 @@
+prefix=/home/robot/workspaces/ur5_controllers/devel
+
+Name: mpc_low
+Description: Description of mpc_low
+Version: 0.0.0
+Cflags: -I/home/robot/workspaces/ur5_controllers/src/mpc_low/include
+Libs: -L${prefix}/lib -lmpc_low
+Requires: geometry_msgs roscpp rospy std_msgs sensor_msgs

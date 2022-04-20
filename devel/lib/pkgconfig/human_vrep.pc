@@ -1,0 +1,8 @@
+prefix=/home/robot/workspaces/ur5_controllers/devel
+
+Name: human_vrep
+Description: Description of human_vrep
+Version: 0.0.0
+Cflags: -I/home/robot/workspaces/ur5_controllers/src/human_vrep/include
+Libs: -L${prefix}/lib -lhuman_vrep
+Requires: roscpp rospy std_msgs

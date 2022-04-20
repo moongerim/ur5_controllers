@@ -1,0 +1,8 @@
+prefix=/home/robot/workspaces/ur5_controllers/devel
+
+Name: ur_modern_driver
+Description: Description of ur_modern_driver
+Version: 0.0.1
+Cflags: -I/home/robot/workspaces/ur5_controllers/src/ur_modern_driver_master/include
+Libs: -L${prefix}/lib 
+Requires: hardware_interface controller_manager actionlib control_msgs geometry_msgs roscpp sensor_msgs trajectory_msgs ur_msgs

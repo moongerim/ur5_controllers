@@ -1,0 +1,8 @@
+prefix=/home/robot/workspaces/ur5_controllers/install
+
+Name: mpc_high
+Description: Description of mpc_high
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lmpc_high
+Requires: geometry_msgs roscpp rospy std_msgs sensor_msgs

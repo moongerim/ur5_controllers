@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/robot/workspaces/ur5_controllers/devel/setup.sh
