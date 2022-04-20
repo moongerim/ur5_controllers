@@ -34,7 +34,7 @@ def main():
     global position, velocity, human_data
     rospy.init_node('control', anonymous=True)
     rospy.Subscriber("/joint_states", JointState, callback)
-    rospy.Subscriber("/human", Float64MultiArray, h_callback)
+    rospy.Subscriber("/Obstacle/human_spheres", Float64MultiArray, h_callback)
     # sleep_time = 0
     rate = rospy.Rate(125)
     while not rospy.is_shutdown():

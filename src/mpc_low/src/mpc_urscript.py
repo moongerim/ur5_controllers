@@ -106,7 +106,7 @@ class ENV:
         self.diff = 10
         
     def save_log(self,save_iter):
-        rec_dir = '/home/robot/workspaces/ur5_mpc_ursim/'
+        rec_dir = '/home/robot/workspaces/Big_Data/'
         os.chdir(rec_dir)
         print("***saving***")
         write_mat('mpc_log/' + self.run_name,

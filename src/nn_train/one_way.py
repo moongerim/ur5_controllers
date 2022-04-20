@@ -109,7 +109,6 @@ class ENV:
         self.time = []
         self.ctv_linear = []
         self.arrive = False
-        self.diff = 10
         self.max_diff_list = []
 
     def save_log(self,save_iter):
@@ -131,7 +130,7 @@ class ENV:
                         'lin_vel_limit': self.lin_vel_limit,
                         'file_n':self.file_n,
                         'time':self.time,
-                        'max_diff':self.max_diff_list,
+                        'max_diff_list':self.max_diff_list,
                         'ctv_linear': self.ctv_linear},
                         str(save_iter))    
 

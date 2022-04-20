@@ -77,7 +77,8 @@ for k in range (len(pos)):
     for i in range(rep):
         splited_data.append(temp[i*6000:i*6000+6000])
 print(len(pos),len(splited_data))
-human_spheres = rospy.Publisher('/Obstacle/human_spheres', Float64MultiArray, queue_size=1)
+
+# human_spheres = rospy.Publisher('/Obstacle/human_spheres', Float64MultiArray, queue_size=1)
 
 print("start the high level controller!")
 
@@ -96,17 +97,12 @@ class ENV:
 
     def step(self,i,data_part,file_number,distance):
         k=file_number
-        point_array = [0]*463
+        point_array = [0]*43
         for a in range(14):
             point_array[3*a] = (data_part[file_number+i][3*a])+distance
             point_array[3*a+1] = (data_part[file_number+i][3*a+1])+distance
-            point_array[3*a+2] = (data_part[file_number+i][3*a+2])
+            point_array[3*a+2] = (data_part[file_number+i][3*a+2])-1.2
         point_array[42] = k+1
-        for f in range(10):
-            for a in range(14):    
-                point_array[f*42+43+3*a] = (data_part[file_number+i][3*a])+distance
-                point_array[f*42+43+3*a+1] = (data_part[file_number+i][3*a+1])+distance
-                point_array[f*42+43+3*a+2] = (data_part[file_number+i][3*a+2])
         obstacle_data = Float64MultiArray()
         obstacle_data.data = point_array
         self.pub.publish(obstacle_data)

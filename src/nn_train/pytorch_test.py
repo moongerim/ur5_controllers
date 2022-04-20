@@ -37,13 +37,14 @@ class ENV:
     def __init__(self,model,run_name,net):
         rospy.Subscriber('/info', Float64MultiArray, self.callback)
         self.pub = rospy.Publisher('/ur_driver/URScript', String, queue_size=1)
-        self.flag_pub = rospy.Publisher('/flag', String, queue_size=1)
+        self.flag_pub = rospy.Publisher('/flag', Float64MultiArray, queue_size=1)
         self.run_name = run_name
         self.A = [0.0, -2.3, -1.1, -1.2, -1.2, 0.5]
         self.B = [3.0, -1.6, -1.7, -1.7, -1.7, 1.0]
+        self.init_poses=[0,-1.5708,0,-1.5708,0,0]
         self.net = net
-        self.start = self.A
-        self.goal = self.B
+        self.start = self.B
+        self.goal = self.A
         self.model = model
         self.i = 0
         self.first = 0
@@ -51,7 +52,9 @@ class ENV:
         self.total = 0
         self.threshold_1 = 0.18
         self.threshold_2 = 0.02
-        
+        self.hello_str=[-1,0]
+        self.t_total = time.time()
+
     def callback(self, data):
         self.observation = data.data[0:55]
 
@@ -75,15 +78,17 @@ class ENV:
             print("-----Arrived------")
             arrive = True
             if self.start[0]==self.A[0]:
-                self.start = self.B
-                self.goal = self.A
+                # self.start = self.B
+                # self.goal = self.A
                 # model.load_state_dict(torch.load('20220410_042614/model.pth'))
-                model.load_state_dict(torch.load('20220413_210952/model.pth'))
-            else:
-                self.start = self.A
-                self.goal = self.B
-                # model.load_state_dict(torch.load('20220409_205027/model.pth'))
+                # model.load_state_dict(torch.load('20220413_210952/model.pth'))
                 model.load_state_dict(torch.load('20220413_183838/model.pth'))
+            else:
+                # self.start = self.A
+                # self.goal = self.B
+                # model.load_state_dict(torch.load('20220409_205027/model.pth'))
+                # model.load_state_dict(torch.load('20220413_183838/model.pth'))
+                model.load_state_dict(torch.load('20220413_210952/model.pth'))
         return arrive
 
     def test(self, x_test):
@@ -110,30 +115,46 @@ class ENV:
         self.human_poses.append(self.observation[6:48])
         self.nn_time.append(elapsed_nn)
         self.goals.append(self.goal)
+        # if self.goal[1]==self.A[1]:
+        #     self.init_poses=self.B
+        # else:
+        #     self.init_poses=self.A
+
         self.file_n.append(self.observation[54])
         self.time.append(elapsed_time)
 
     def reset(self):   
+        print("reset")
         if self.first<1:
             self.first+=1
-            time.sleep(5)
+            # time.sleep(5)
             set_init_pose(self.start[0:6],6)
-            # self.threshold = 0.5
+            self.threshold_1 = 0.18
+            self.threshold_2 = 0.05
             time.sleep(10)
             self.init_log_variables()
             self.t_total = time.time()
         else:
-            hello_str = "stop_human"
-            self.flag_pub.publish(hello_str)
+            self.hello_str[1] = 1
+            pub_data = Float64MultiArray()
+            pub_data.data = self.hello_str
+            self.flag_pub.publish(pub_data)
             time.sleep(1)
             self.save_log(self.i)
             self.i+=1
+            set_init_pose(self.start[0:6], 10)
+            time.sleep(10)
             self.init_log_variables()
+            self.threshold_1 = 0.18
+            self.threshold_2 = 0.02
             # set_init_pose(self.start[0:6], 1)
             # self.threshold = 0.15
             # time.sleep(2)
-            hello_str = "start_human"
-            self.flag_pub.publish(hello_str)
+            self.hello_str[0]+= 1
+            self.hello_str[1] = 0
+            pub_data.data = self.hello_str
+            self.flag_pub.publish(pub_data)
+            time.sleep(1)
         self.step()
     
     def init_log_variables(self):
@@ -174,7 +195,8 @@ if __name__ == '__main__':
     n = [200,200,200]
     model = MyModel(dev,48,6,n).to(dev)
     model.cuda()
-    rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_183838/'
+    # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_183838/'
+    rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_210952/'
     os.chdir(rec_dir)
     model.load_state_dict(torch.load('model.pth'))
     env = ENV(model,run_name,n)
