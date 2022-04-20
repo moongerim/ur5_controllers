@@ -86,7 +86,7 @@ class ENV:
         self.hello_str[1] = 0
         pub_data.data = self.hello_str
         self.flag_pub.publish(pub_data)
-        time.sleep(0.05)
+        time.sleep(1)
         # self.flag_pub.publish(hello_str)
         self.step()
     

@@ -282,7 +282,7 @@ int main(int argc, char **argv)
     start_motion_time = big_loop_iteration*0.5 + 4.0;
     stop_human_time = big_loop_iteration*(loop_duration*2) + (loop_duration*2);
   //   //** Low level Loop      
-    int row_index = 1;
+    int row_index = 0;
     double loop_start_time = 0;
 	  
 	  ros::Rate goto_loop(20);

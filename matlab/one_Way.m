@@ -1,12 +1,12 @@
 close all;
 clear all;
 clc
-i=21;
-cd /home/robot/workspaces/Big_Data/mpc_log/20220420_140058
+i=4;
+cd /home/robot/workspaces/Big_Data/mpc_log/20220420_144324
 filename = sprintf('%i.mat',i);
 load(filename);
 human_1 = human_poses;
-cd /home/robot/workspaces/Big_Data/mpc_log/20220420_140058
+cd /home/robot/workspaces/Big_Data/mpc_log/20220420_143534
 filename = sprintf('%i.mat',i);
 load(filename);
 human_2 = human_poses;
