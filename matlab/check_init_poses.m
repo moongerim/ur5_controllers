@@ -1,8 +1,8 @@
 close all;
 clear all;
 clc
-cd /home/robot/workspaces/Big_Data/mpc_log/20220416_212153
-file_n = 4792;
+cd /home/robot/workspaces/Big_Data/mpc_log/20220423_163003
+file_n = 5529;
 iter_AB_eval = 456;
 iter_AB_train = 2930;
 iter_AB_test = 1;

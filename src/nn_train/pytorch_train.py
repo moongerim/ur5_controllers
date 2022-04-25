@@ -297,22 +297,24 @@ if __name__ == '__main__':
     # Change filename here:
     filename = 'data_to_B'
     if filename =='data_to_A':
-        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220415_143814'
-        train_files = 4811
-        eval_files = 917
+        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220424_101739'
+        train_files = 4904
+        eval_files = 619
         test_file = 'data_to_A_test_5.csv'
     if filename =='data_to_B':
-        direction = '/home/robot/workspaces/Big_Data/mpc_log/data_to_B'
-        train_files = 4811
-        eval_files = 913
+        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220423_163003'
+        train_files = 4892
+        eval_files = 615
         test_file = 'data_to_B_test_5.csv'
     if filename =='data_AB':
-        train_files = 3076
-        eval_files = 592
+        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220421_105211'
+        train_files = 3276
+        eval_files = 553
         test_file = 'data_AB_test_5.csv'
     if filename =='data_BA':
-        train_files = 3076
-        eval_files = 594
+        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220421_105211'
+        train_files = 3273
+        eval_files = 555
         test_file = 'data_BA_test_5.csv'
     
     n_batch = 1000

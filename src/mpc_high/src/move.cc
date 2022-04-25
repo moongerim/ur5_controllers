@@ -253,16 +253,6 @@ int main(int argc, char **argv)
 
   // ROS_INFO("Goal default to: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f", 
 	//           my_follower.goal[0], my_follower.goal[1], my_follower.goal[2],my_follower.goal[3], my_follower.goal[4], my_follower.goal[5]);
-  // goal in joint space
-  // define key trajectory points
-  // double read_goal[2][6] = { 2.8, -2.2, -1.0, -0.6, 1.4, 1.1,
-  //                             0.0, -2.3, -0.9, -0.5, 1.3, 1.0};
-
-  // double read_goal[2][6] = { 2.5, -1.8, -1.8, 0.0, 1.5, 1.1,
-  //                             0.0, -2.3, -1.3, -1.5, 1.0, 0.0};
-
-  // double read_goal[2][6] = { 3.0, -2.0, -0.1, -0.1, 1.0, 0.5,
-  //                             0.0, -1.5, -1.6, -1.6, 1.6, 1.0};
 
   double read_goal[2][6] = { 3.0, -1.6, -1.7, -1.7, -1.7, 1.0,
                              0.0, -2.3, -1.1, -1.2, -1.2, 0.5};
@@ -373,7 +363,7 @@ int main(int argc, char **argv)
           max_diff = abs(currentState_targetValue[i] - currentState_targetValue[i+6]); 
         }
       }
-      if (max_diff < 0.02) {
+      if (max_diff < 0.001) {
         // row_index = (row_index+1)%2;
         clock_t end = clock();
         double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;

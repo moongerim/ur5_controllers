@@ -64,7 +64,7 @@ average_rh_cost = sum(total_MPC_rh)/iter_total_file
 clear all
 close all
 clc
-cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220420_173843
+cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220425_153409
 total_file_n = 25
 for file_number = 1:total_file_n
 

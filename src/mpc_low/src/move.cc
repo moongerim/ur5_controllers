@@ -231,8 +231,8 @@ int main(int argc, char **argv)
   while (ros::ok())
   {
     printf("max diff=%f\n",my_follower.from_high[30]);
-    // if(my_follower.from_high[30]<0.001){
-      if(my_follower.from_high[30]<0.02){
+    if(my_follower.from_high[30]<0.001){
+      // if(my_follower.from_high[30]<0.02){
         printf("------------------Arrived---------------------\n");
         // std_msgs::Float64MultiArray init_data;
         // init_data.data.clear();

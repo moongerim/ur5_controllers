@@ -2,6 +2,7 @@ close all;
 clear all;
 clc
 i=1;
+% MPC
 % A to B
 % cd /home/robot/workspaces/Big_Data/mpc_log/20220420_145951
 % B to A
@@ -14,28 +15,42 @@ jv_1 = low_controller(:,1:6);
 sd_1 = smallest_dist;
 % sd_2 = find_sd(joint_positions, human_poses)
 
+% NN with pred
 % A to B
 % cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220420_171624
-% B to A
+% % B to A
 cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220420_173843
 filename = sprintf('%i.mat',i);
 load(filename);
 jp_2 = joint_positions;
 jv_2 = actions;
 sd_2 = find_sd(joint_positions, human_poses)
+
+% NN
+% A to B
+% cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220425_151225
+% % B to A
+cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220425_153409
+filename = sprintf('%i.mat',i);
+load(filename);
+jp_3 = joint_positions;
+jv_3 = actions;
+
+sd_3 = find_sd(joint_positions, human_poses)
 % sd_2 = smallest_dist;
 
 len = length(sd_1);
 dt = 0.05;
-plot_2f(jp_1,jp_2,'jp.png')
-plot_2f(jv_1,jv_2,'jv.png')
+plot_3f(jp_1,jp_2,jp_3,'jp.png')
+plot_3f(jv_1,jv_2,jv_3,'jv.png')
 figure_1 = figure('Name', 'SD')
 hold on
 plot(sd_1);
 plot(sd_2);
+plot(sd_3);
 set(gca,'XTick',0:200:200*len);
 set(gca,'XTickLabel',0:dt*200:len*200*dt);
-legend("mpc sd", "nn sd"); 
+legend("mpc", "nn with prediction", "nn"); 
 
 function a = plot_2f(data1, data2,name)
     len = length(data1)
@@ -96,6 +111,77 @@ function a = plot_2f(data1, data2,name)
     set(gca,'XTickLabel',0:dt*200:len*200*dt);
     
     hL = legend([l1,l2],["mpc", "nn"]);
+    newPosition = [0.6 0.1 0.1 0.1];
+    newUnits = 'normalized';
+    set(hL,'Position', newPosition,'Units', newUnits);
+    saveas(fig_5, name);
+end
+
+function a = plot_3f(data1, data2, data3, name)
+    len = length(data1)
+    dt = 0.05
+    fig_5 = figure('Name', name);
+    subplot(4,2,1);
+    grid on;
+    hold on;
+    plot(data1(:,1));
+    plot(data2(:,1));
+    plot(data3(:,1));
+    title("jp 1")
+    set(gca,'XTick',0:200:200*len);
+    set(gca,'XTickLabel',0:dt*200:len*200*dt);
+    
+    subplot(4,2,2);
+    grid on;
+    hold on;
+    plot(data1(:,2));
+    plot(data2(:,2));
+    plot(data3(:,2));
+    title("jp 2 ")
+    set(gca,'XTick',0:200:200*len);
+    set(gca,'XTickLabel',0:dt*200:len*200*dt);
+
+    subplot(4,2,3);
+    grid on;
+    hold on;
+    plot(data1(:,3));
+    plot(data2(:,3));
+    plot(data3(:,3));
+    title("jp 3")
+    set(gca,'XTick',0:200:200*len);
+    set(gca,'XTickLabel',0:dt*200:len*200*dt);
+
+    subplot(4,2,4);
+    grid on;
+    hold on;
+    plot(data1(:,4));
+    plot(data2(:,4));
+    plot(data3(:,4));
+    title("jp 4")
+    set(gca,'XTick',0:200:200*len);
+    set(gca,'XTickLabel',0:dt*200:len*200*dt);
+
+    subplot(4,2,5);
+    grid on;
+    hold on;
+    plot(data1(:,5));
+    plot(data2(:,5));
+    plot(data3(:,5));
+    title("jp 5")
+    set(gca,'XTick',0:200:200*len);
+    set(gca,'XTickLabel',0:dt*200:len*200*dt);
+    
+    subplot(4,2,6);
+    grid on;
+    hold on;
+    l1 = plot(data1(:,6));
+    l2 = plot(data2(:,6));
+    l3 = plot(data3(:,6));
+    title("tp 6")
+    set(gca,'XTick',0:200:200*len);
+    set(gca,'XTickLabel',0:dt*200:len*200*dt);
+    
+    hL = legend([l1,l2,l3],["mpc", "nn with prediction", "nn"]);
     newPosition = [0.6 0.1 0.1 0.1];
     newUnits = 'normalized';
     set(hL,'Position', newPosition,'Units', newUnits);

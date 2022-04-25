@@ -799,7 +799,7 @@ pos.append(pos_181)
 # pos.append(pos_195)
 
 human_spheres = rospy.Publisher('/Obstacle/human_spheres', Float64MultiArray, queue_size=1)
-# future_temp = [0,0,0,0,0,0,0,0,0,0]   #0s
+future_temp = [0,0,0,0,0,0,0,0,0,0]   #0s
 # future_temp = [125,125,125,125,125,125,125,125,125,125] #0.5s
 # future_temp = [125,250,250,250,250,250,250,250,250,250] #1s
 # future_temp = [125,250,375,375,375,375,375,375,375,375] #1.5s
@@ -809,7 +809,7 @@ human_spheres = rospy.Publisher('/Obstacle/human_spheres', Float64MultiArray, qu
 # future_temp = [125,250,375,500,625,750,875,875,875,875] #3.5s
 # future_temp = [125,250,375,500,625,750,875,1000,1000,1000] #4s
 # future_temp = [125,250,375,500,625,750,875,1000,1125,1125] #4.5s
-future_temp = [125,250,375,500,625,750,875,1000,1125,1250] #5s
+# future_temp = [125,250,375,500,625,750,875,1000,1125,1250] #5s
 print("start")
 
 condition_h = 1

@@ -62,11 +62,12 @@ class ENV:
         self.ctv_linear.append(self.observation[159:166])
         self.max_diff = self.observation[166]
         self.time.append(elapsed_time)
+    
     def reset(self): 
         print("reset")
         if self.first<1:
             self.first+=1
-            self.threshold = 0.02
+            self.threshold = 0.001
             self.init_log_variables()
             self.t_total = time.time()
         else:
@@ -79,7 +80,7 @@ class ENV:
             self.init_log_variables()
 
             # set_init_pose(self.goal[0:6], 4)
-            self.threshold = 0.02
+            self.threshold = 0.001
             time.sleep(1)
             hello_str = "start_human"
             self.flag_pub.publish(hello_str)

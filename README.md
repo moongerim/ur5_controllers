@@ -24,7 +24,7 @@ install `ursim-3.6.1.30595`
 1. ./start-ursim.sh
 2. roslaunch ur_modern_driver ur5_bringup.launch robot_ip:=127.0.0.1
 3. cd workspaces/ur5_mpc_ursim/src/nn_train
-4. python human_spheres.py
+4. python test_human.py
 5. ./control.py
 6. source ./venv/bin/activate
 7. cd workspaces/ur5_mpc_ursim/src/nn_train
