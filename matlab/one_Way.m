@@ -4,9 +4,9 @@ clc
 i=1;
 % MPC
 % A to B
-% cd /home/robot/workspaces/Big_Data/mpc_log/20220420_145951
+cd /home/robot/workspaces/Big_Data/mpc_log/20220427_105926
 % B to A
-cd /home/robot/workspaces/Big_Data/mpc_log/20220420_151727
+% cd /home/robot/workspaces/Big_Data/mpc_log/20220427_112106
 
 filename = sprintf('%i.mat',i);
 load(filename);
@@ -17,9 +17,9 @@ sd_1 = smallest_dist;
 
 % NN with pred
 % A to B
-% cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220420_171624
+cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_114012
 % % B to A
-cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220420_173843
+% cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_115509
 filename = sprintf('%i.mat',i);
 load(filename);
 jp_2 = joint_positions;
@@ -28,9 +28,9 @@ sd_2 = find_sd(joint_positions, human_poses)
 
 % NN
 % A to B
-% cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220425_151225
+cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_121232
 % % B to A
-cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220425_153409
+% cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_122747
 filename = sprintf('%i.mat',i);
 load(filename);
 jp_3 = joint_positions;

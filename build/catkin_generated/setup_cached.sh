@@ -7,7 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/robot/workspaces/ur5_controllers/devel:$CMAKE_PREFIX_PATH"
 export PWD='/home/robot/workspaces/ur5_controllers/build'
-export ROSLISP_PACKAGE_DIRECTORIES='/home/robot/workspaces/ur5_controllers/devel/share/common-lisp'
-export ROS_PACKAGE_PATH="/home/robot/workspaces/ur5_controllers/src:$ROS_PACKAGE_PATH"

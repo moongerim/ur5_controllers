@@ -3,6 +3,10 @@
 2. edit path
 3. source ~/.bashrc
 
+## Testing with Real robot
+1. robot ip parameters: ip: 192.168.1.2/ mask:255.255.255.0/ gateway:192.168.1.1
+2. computer ip parameters: ip: 192.168.1.1 / mask:255.255.255.0/ gateway: 192.168.1.1
+
 ## URSIM install
 install `ursim-3.6.1.30595`
 

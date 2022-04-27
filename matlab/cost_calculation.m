@@ -3,7 +3,7 @@
 clear all
 close all
 clc
-cd /home/robot/workspaces/Big_Data/mpc_log/20220420_151727
+cd /home/robot/workspaces/Big_Data/mpc_log/20220427_112106
 total_file_n = 25;
 iter_total_file = 0;
 for file_number =1:total_file_n
@@ -64,7 +64,7 @@ average_rh_cost = sum(total_MPC_rh)/iter_total_file
 clear all
 close all
 clc
-cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220425_153409
+cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_122747
 total_file_n = 25
 for file_number = 1:total_file_n
 
@@ -115,15 +115,15 @@ total_NN_jp(file_number) = sum(jp_cost);
 total_NN_jv(file_number) = sum(jv_cost);
 total_NN_rh(file_number) = sum(rh_cost);
 time_spent(file_number) = time(t_nn)-time(s_nn);
-figure(3)
-hold on
-plot(nn_cost,'r');
-plot(jp_cost,'k');
-plot(jv_cost,'b');
-plot(rh_cost,'g');
-set(gca,'XTick',0:200:200*len);
-set(gca,'XTickLabel',0:dt*200:len*200*dt);
-legend("total nn","jp","jv","rh");
+% figure(3)
+% hold on
+% plot(nn_cost,'r');
+% plot(jp_cost,'k');
+% plot(jv_cost,'b');
+% plot(rh_cost,'g');
+% set(gca,'XTick',0:200:200*len);
+% set(gca,'XTickLabel',0:dt*200:len*200*dt);
+% legend("total nn","jp","jv","rh");
 
 % range(1,:) = max(actions);
 % range(2,:) = min(actions);

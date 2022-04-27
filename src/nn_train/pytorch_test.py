@@ -200,7 +200,12 @@ if __name__ == '__main__':
     model = MyModel(dev,48,6,n).to(dev)
     model.cuda()
     # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_183838/'
+    # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_210952/'
+    # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220425_141300/'
     rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220425_120455/'
+    
+    
+    
     os.chdir(rec_dir)
     model.load_state_dict(torch.load('model.pth'))
     env = ENV(model,run_name,n)
