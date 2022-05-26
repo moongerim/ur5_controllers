@@ -43,8 +43,8 @@ class ENV:
         self.B = [3.0, -1.6, -1.7, -1.7, -1.7, 1.0]
         self.init_poses=[0,-1.5708,0,-1.5708,0,0]
         self.net = net
-        self.start = self.B
-        self.goal = self.A
+        self.start = self.A
+        self.goal = self.B
         self.model = model
         self.i = 0
         self.first = 0
@@ -66,7 +66,7 @@ class ENV:
             temp = abs(self.goal[i]-self.observation[i])
             if temp>max_diff:
                 max_diff = temp
-        print(max_diff)
+        print(max_diff, self.start)
         rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/'
         os.chdir(rec_dir)
         if max_diff<self.threshold_1 and max_diff>self.threshold_2:
@@ -80,19 +80,15 @@ class ENV:
             print("-----Arrived------")
             arrive = True
             if self.start[0]==self.A[0]:
-                # self.start = self.B
-                # self.goal = self.A
-                # model.load_state_dict(torch.load('20220410_042614/model.pth'))
-                # model.load_state_dict(torch.load('20220413_210952/model.pth'))
-                # model.load_state_dict(torch.load('20220413_183838/model.pth'))
-                model.load_state_dict(torch.load('20220425_104106/model.pth'))
-            else:
-                # self.start = self.A
-                # self.goal = self.B
-                # model.load_state_dict(torch.load('20220409_205027/model.pth'))
-                # model.load_state_dict(torch.load('20220413_183838/model.pth'))
+                self.start = self.B
+                self.goal = self.A
                 # model.load_state_dict(torch.load('20220413_210952/model.pth'))
                 model.load_state_dict(torch.load('20220425_120455/model.pth'))
+            else:
+                self.start = self.A
+                self.goal = self.B
+                # model.load_state_dict(torch.load('20220413_183838/model.pth'))
+                model.load_state_dict(torch.load('20220425_104106/model.pth'))
         return arrive
 
     def test(self, x_test):
@@ -131,7 +127,6 @@ class ENV:
         print("reset")
         if self.first<1:
             self.first+=1
-            # time.sleep(5)
             set_init_pose(self.start[0:6],6)
             self.threshold_1 = 0.18
             self.threshold_2 = 0.05
@@ -139,26 +134,23 @@ class ENV:
             self.init_log_variables()
             self.t_total = time.time()
         else:
-            self.hello_str[1] = 1
-            pub_data = Float64MultiArray()
-            pub_data.data = self.hello_str
-            self.flag_pub.publish(pub_data)
-            time.sleep(1)
-            self.save_log(self.i)
+            time.sleep(0.5)
+            if self.i%2==0:
+                self.hello_str[1] = 1
+                pub_data = Float64MultiArray()
+                pub_data.data = self.hello_str
+                self.flag_pub.publish(pub_data)
+                time.sleep(1)
+                self.save_log(self.i)
+                self.init_log_variables()
+                self.threshold_1 = 0.18
+                self.threshold_2 = 0.02
+                self.hello_str[0]+= 1
+                self.hello_str[1] = 0
+                pub_data.data = self.hello_str
+                self.flag_pub.publish(pub_data)
+                time.sleep(1)
             self.i+=1
-            set_init_pose(self.start[0:6], 10)
-            time.sleep(10)
-            self.init_log_variables()
-            self.threshold_1 = 0.18
-            self.threshold_2 = 0.02
-            # set_init_pose(self.start[0:6], 1)
-            # self.threshold = 0.15
-            # time.sleep(2)
-            self.hello_str[0]+= 1
-            self.hello_str[1] = 0
-            pub_data.data = self.hello_str
-            self.flag_pub.publish(pub_data)
-            time.sleep(1)
         self.step()
     
     def init_log_variables(self):
@@ -201,10 +193,8 @@ if __name__ == '__main__':
     model.cuda()
     # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_183838/'
     # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220413_210952/'
-    # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220425_141300/'
-    rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220425_120455/'
-    
-    
+    rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220425_141300/'
+    # rec_dir = '/home/robot/workspaces/Big_Data/nn_train/log/20220425_120455/'
     
     os.chdir(rec_dir)
     model.load_state_dict(torch.load('model.pth'))

@@ -73,9 +73,15 @@ pos.append(pos_195)
 splited_data=[]
 for k in range (len(pos)):
     temp = pos[k]
-    rep=int(len(temp)/6000)
+    rep=int(len(temp)/10000)
     for i in range(rep):
-        splited_data.append(temp[i*6000:i*6000+6000])
+        splited_data.append(temp[i*10000:i*10000+10000])
+for k in range (len(pos)):
+    temp = pos[k]
+    for i in range(7):
+        splited_data.append(temp[i*1000:i*1000+10000])
+
+
 print(len(pos),len(splited_data))
 
 # human_spheres = rospy.Publisher('/Obstacle/human_spheres', Float64MultiArray, queue_size=1)

@@ -4,12 +4,17 @@ clear all
 close all
 clc
 cd /home/robot/workspaces/Big_Data/mpc_log/20220427_112106
-total_file_n = 25;
+% cd /home/robot/workspaces/Big_Data/mpc_log/20220427_105926
+% cd /home/robot/workspaces/Big_Data/mpc_log/20220511_123047
+total_file_n = 10;
 iter_total_file = 0;
-for file_number =1:total_file_n
+max_mpc_time = zeros(1,25);
+for file_number =1:25
     iter_total_file = iter_total_file+1;
     fileneme = sprintf('%i.mat',file_number);
     load(fileneme);
+    mpc_time = low_controller(:,7);
+    max_mpc_time(file_number) = max(mpc_time);
     high_goal = from_high_controller(:,19:24);
     s_mpc = 1;
     len_f = length(joint_positions);
@@ -19,33 +24,34 @@ for file_number =1:total_file_n
     mpc_jp_cost = cost(2,:);
     mpc_jv_cost = cost(3,:);
     mpc_rh_cost = cost(4,:);
-
+    jp = joint_positions;
+    jv = low_controller(:,1:6);
     dt = 0.05;
-%     fig_mpc_lost = figure(1)
-%     hold on
-%     plot(mpc_cost,'r');
-%     plot(mpc_jp_cost,'k');
-%     plot(mpc_jv_cost,'b');
-%     plot(mpc_rh_cost,'g');
-%     set(gca,'XTick',0:200:200*t_mpc);
-%     set(gca,'XTickLabel',0:dt*200:t_mpc*200*dt);
-
-%     legend("total mpc","jp","jv","rh");
-%     saveas(fig_mpc_lost,'mpc_lost.png');
-
-    error(file_number) =0; 
-    for i = s_mpc:len_f
-        for j = 1:7
-            if ctv_linear(i,j)>lin_vel_limit(i,j)+0.01
-                error(file_number) = error(file_number)+1;
-            end
+    A = zeros(len_f,14);
+    error_mpc(file_number) = 0;
+    for f=1:len_f
+        tp = test_points(jp(f,1),jp(f,2),jp(f,3),jp(f,4),jp(f,5),jp(f,6));
+        tp_vel = test_vel(jp(f,1),jp(f,2),jp(f,3),jp(f,4),jp(f,5),jp(f,6),jv(f,1),jv(f,2),jv(f,3),jv(f,4),jv(f,5),jv(f,6));
+        A(f,:) = limit_check(tp, human_poses(f,:), tp_vel);
+        if A(f,1)<A(f,8) || A(f,2)<A(f,9) || A(f,3)<A(f,10) || A(f,4)<A(f,11) || A(f,5)<A(f,12) || A(f,6)<A(f,13) || A(f,7)<A(f,14)
+            error_mpc(file_number) = error_mpc(file_number)+1;
         end
     end
+    
     time_spent(file_number) = time(len_f)-time(s_mpc);
     total_MPC(file_number) = sum(mpc_cost);
     total_MPC_jp(file_number) = sum(mpc_jp_cost);
     total_MPC_jv(file_number) = sum(mpc_jv_cost);
     total_MPC_rh(file_number) = sum(mpc_rh_cost);
+%     figure(3)
+%     hold on
+%     plot(mpc_cost,'r');
+%     plot(mpc_jp_cost,'k');
+%     plot(mpc_jv_cost,'b');
+%     plot(mpc_rh_cost,'g');
+%     set(gca,'XTick',0:200:200*len_f);
+%     set(gca,'XTickLabel',0:dt*200:len_f*200*dt);
+%     legend("total nn","jp","jv","rh");
 
 %         plot_f(joint_positions, 'joint_positions.png', dt, s_mpc, len_f);
 %         plot_f(low_MPC_solutions, 'jointvels_MPC.png', dt, s_mpc, len_f);
@@ -64,13 +70,16 @@ average_rh_cost = sum(total_MPC_rh)/iter_total_file
 clear all
 close all
 clc
-cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_122747
-total_file_n = 25
-for file_number = 1:total_file_n
-
+% cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_115509
+cd /home/robot/workspaces/Big_Data/nn_train/test_log/20220427_115509
+total_file_n = 90
+iter_total_file = 0;
+max_nn_time = zeros(1,25);
+for file_number = 1:25
+iter_total_file = iter_total_file+1;
 filename = sprintf('%i.mat', file_number);
 load(filename);
-
+max_nn_time(file_number) = max(nn_time);
 robot_spheres = [0.15, 0.15, 0.15, 0.08, 0.08, 0.12, 0.1];
 human_sphers = [0.5510,0.6010,0.5010,0.5010,0.5010,0.5010,0.5010,0.5010,0.4510,0.4510,0.4810,0.4810,0.5510,0.6010];
 
@@ -98,7 +107,19 @@ s = 3;
 
 len = length(actions);
 dt = 0.025;
-
+A = zeros(len,14);
+error_nn_pr(file_number) = 0;
+jp = joint_positions;
+jv = actions;
+for f=1:len
+    tp = test_points(jp(f,1),jp(f,2),jp(f,3),jp(f,4),jp(f,5),jp(f,6));
+    tp_vel = test_vel(jp(f,1),jp(f,2),jp(f,3),jp(f,4),jp(f,5),jp(f,6),jv(f,1),jv(f,2),jv(f,3),jv(f,4),jv(f,5),jv(f,6));
+    A(f,:) = limit_check(tp, human_poses(f,:), tp_vel);
+    if A(f,1)<A(f,8) || A(f,2)<A(f,9) || A(f,3)<A(f,10) || A(f,4)<A(f,11) || A(f,5)<A(f,12) || A(f,6)<A(f,13) || A(f,7)<A(f,14)
+        error_nn_pr(file_number) = error_nn_pr(file_number)+1;
+    end
+end
+    
 max(nn_time);
 [len,l] = size(actions);
 e = len;
@@ -139,11 +160,11 @@ time_spent(file_number) = time(t_nn)-time(s_nn);
 % saveas(fig_sd,'sd.png');
 
 end
-average_time = sum(time_spent)/total_file_n
-average_total_cost = sum(total_NN)/total_file_n
-average_jp_cost = sum(total_NN_jp)/total_file_n
-average_jv_cost = sum(total_NN_jv)/total_file_n
-average_rh_cost = sum(total_NN_rh)/total_file_n
+average_time = sum(time_spent)/iter_total_file
+average_total_cost = sum(total_NN)/iter_total_file
+average_jp_cost = sum(total_NN_jp)/iter_total_file
+average_jv_cost = sum(total_NN_jv)/iter_total_file
+average_rh_cost = sum(total_NN_rh)/iter_total_file
 %% cost calculation
 function C = cost_calc(jp, goal, q_d, human, l)
     gamma = 3;
@@ -355,4 +376,76 @@ function a = plot_2f(data1, data2, name, dt, s, len)
     set(hL,'Position', newPosition,'Units', newUnits);
     name = sprintf('limits_%i.png');
     saveas(fig_5, name);
+end
+
+function array = limit_check(test_point_cposes, human_poses, test_point_vels)
+    array = zeros(1,14);
+    robot_spheres = [0.15, 0.15, 0.15, 0.08, 0.08, 0.12, 0.1];
+    sphere_radi = [0.5510,0.6010,0.5010,0.5010,0.5010,0.5010,0.5010,0.5010,0.4510,0.4510,0.4810,0.4810,0.5510,0.6010];
+    min_dist = [1000,1000,1000,1000,1000,1000,1000];
+    for j = 0:6
+        w = [test_point_cposes(j*3+1),test_point_cposes(j*3+2),test_point_cposes(j*3+3)];
+        for k = 0:13
+            p = [human_poses(k*3+1),human_poses(k*3+2),human_poses(k*3+3)];
+            local_val = norm(p-w);
+            if local_val<min_dist(j+1)
+                min_dist(j+1) = local_val;
+                spheres_dist(j+1) = robot_spheres(j+1)+sphere_radi(k+1);
+            end
+        end
+    end
+    max_vell = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+    max_linear_vell = 0;
+    temp_linear_vell = 0;
+    for k = 0:6
+        temp_linear_vell = sqrt(test_point_vels(k*3+1)*test_point_vels(k*3+1)+test_point_vels(k*3+2)*test_point_vels(k*3+2)+test_point_vels(k*3+3)*test_point_vels(k*3+3));
+        max_vell(k+1) = temp_linear_vell;
+        if max_linear_vell < temp_linear_vell
+             max_linear_vell = temp_linear_vell;
+        end
+    end
+    lin_vell_limit_arr=[10, 10, 10, 10, 10, 10, 10];
+    lin_vell_scale = 10;
+    alpha=[2.79, 1.95, 1, 0.8, 0.65, 0.45, 0.35];
+    d_bar = 0.15;
+    for i = 0:6
+%         sqrt_temp_value = (min_dist(i+1)*min_dist(i+1)-(spheres_dist(i+1)+d_bar))*(spheres_dist(i+1)+d_bar);
+        sqrt_temp_value = (min_dist(i+1)+spheres_dist(i+1))*(min_dist(i+1)+spheres_dist(i+1))-spheres_dist(i+1)*spheres_dist(i+1);
+        if sqrt_temp_value<0
+           lin_vell_limit_arr(i+1) = 0.00000000000000;
+        else
+            lin_vell_limit_arr(i+1) = alpha(i+1)*sqrt(sqrt_temp_value);
+        end
+          temp_scale = (lin_vell_limit_arr(i+1)/max_vell(i+1));
+        if lin_vell_scale>temp_scale
+            lin_vell_scale = temp_scale;
+        end
+    end
+    array(1:7) = lin_vell_limit_arr;
+    array(8:14) = max_vell;
+end
+
+function A = test_vel(theta_1, theta_2, theta_3, theta_4, theta_5, theta_6, u_1,u_2,u_3,u_4,u_5,u_6)
+    A = zeros(21,1);
+    A(1) =  0.06*u_1*cos(theta_1);
+    A(2) =  0.06*u_1*sin(theta_1);
+    A(3) =  0;
+    A(4) =  u_1*(0.14*cos(theta_1) + 0.2125*cos(theta_2)*sin(theta_1)) + 0.2125*u_2*cos(theta_1)*sin(theta_2);
+    A(5) =  u_1*(0.14*sin(theta_1) - 0.2125*cos(theta_1)*cos(theta_2)) + 0.2125*u_2*sin(theta_1)*sin(theta_2);
+    A(6) =  -0.2125*u_2*cos(theta_2);
+    A(7) = u_1*(0.11*cos(theta_1) + 0.425*cos(theta_2)*sin(theta_1)) + 0.425*u_2*cos(theta_1)*sin(theta_2);
+    A(8) = u_1*(0.11*sin(theta_1) - 0.425*cos(theta_1)*cos(theta_2)) + 0.425*u_2*sin(theta_1)*sin(theta_2);
+    A(9) = -0.425*u_2*cos(theta_2);
+    A(10) = 0.02*u_1*cos(theta_1) + 0.13075*u_1*cos(theta_2 + theta_3)*sin(theta_1) + 0.13075*u_2*sin(theta_2 + theta_3)*cos(theta_1) + 0.13075*u_3*sin(theta_2 + theta_3)*cos(theta_1) + 0.425*u_1*cos(theta_2)*sin(theta_1) + 0.425*u_2*cos(theta_1)*sin(theta_2);
+    A(11) = 0.02*u_1*sin(theta_1) - 0.13075*u_1*cos(theta_2 + theta_3)*cos(theta_1) + 0.13075*u_2*sin(theta_2 + theta_3)*sin(theta_1) + 0.13075*u_3*sin(theta_2 + theta_3)*sin(theta_1) - 0.425*u_1*cos(theta_1)*cos(theta_2) + 0.425*u_2*sin(theta_1)*sin(theta_2);
+    A(12) = - 1.0*u_2*(0.13075*cos(theta_2 + theta_3) + 0.425*cos(theta_2)) - 0.13075*u_3*cos(theta_2 + theta_3);
+    A(13) = 0.02*u_1*cos(theta_1) + 0.2615*u_1*cos(theta_2 + theta_3)*sin(theta_1) + 0.2615*u_2*sin(theta_2 + theta_3)*cos(theta_1) + 0.2615*u_3*sin(theta_2 + theta_3)*cos(theta_1) + 0.425*u_1*cos(theta_2)*sin(theta_1) + 0.425*u_2*cos(theta_1)*sin(theta_2);
+    A(14) = 0.02*u_1*sin(theta_1) - 0.2615*u_1*cos(theta_2 + theta_3)*cos(theta_1) + 0.2615*u_2*sin(theta_2 + theta_3)*sin(theta_1) + 0.2615*u_3*sin(theta_2 + theta_3)*sin(theta_1) - 0.425*u_1*cos(theta_1)*cos(theta_2) + 0.425*u_2*sin(theta_1)*sin(theta_2);
+    A(15) = - 1.0*u_2*(0.2615*cos(theta_2 + theta_3) + 0.425*cos(theta_2)) - 0.2615*u_3*cos(theta_2 + theta_3);
+    A(16) = u_1*(0.06*cos(theta_1) + 0.00025*sin(theta_1)*(1569.0*cos(theta_2 + theta_3) + 1700.0*cos(theta_2))) + 0.00025*u_2*cos(theta_1)*(1569.0*sin(theta_2 + theta_3) + 1700.0*sin(theta_2)) + 0.39225*u_3*sin(theta_2 + theta_3)*cos(theta_1);
+    A(17) = u_1*(0.06*sin(theta_1) - 0.00025*cos(theta_1)*(1569.0*cos(theta_2 + theta_3) + 1700.0*cos(theta_2))) + 0.00025*u_2*sin(theta_1)*(1569.0*sin(theta_2 + theta_3) + 1700.0*sin(theta_2)) + 0.39225*u_3*sin(theta_2 + theta_3)*sin(theta_1);
+    A(18) = - 1.0*u_2*(0.39225*cos(theta_2 + theta_3) + 0.425*cos(theta_2)) - 0.39225*u_3*cos(theta_2 + theta_3);
+    A(19) = 0.05915*u_1*cos(theta_1) + 0.0823*u_1*cos(theta_1)*cos(theta_5) + 0.425*u_1*cos(theta_2)*sin(theta_1) + 0.425*u_2*cos(theta_1)*sin(theta_2) - 0.0823*u_5*sin(theta_1)*sin(theta_5) + 0.09465*u_2*cos(theta_2 + theta_3)*cos(theta_1)*cos(theta_4) + 0.09465*u_3*cos(theta_2 + theta_3)*cos(theta_1)*cos(theta_4) + 0.09465*u_4*cos(theta_2 + theta_3)*cos(theta_1)*cos(theta_4) - 0.09465*u_1*cos(theta_2 + theta_3)*sin(theta_1)*sin(theta_4) - 0.09465*u_1*sin(theta_2 + theta_3)*cos(theta_4)*sin(theta_1) - 0.09465*u_2*sin(theta_2 + theta_3)*cos(theta_1)*sin(theta_4) - 0.09465*u_3*sin(theta_2 + theta_3)*cos(theta_1)*sin(theta_4) - 0.09465*u_4*sin(theta_2 + theta_3)*cos(theta_1)*sin(theta_4) + 0.39225*u_1*cos(theta_2)*cos(theta_3)*sin(theta_1) + 0.39225*u_2*cos(theta_1)*cos(theta_2)*sin(theta_3) + 0.39225*u_2*cos(theta_1)*cos(theta_3)*sin(theta_2) + 0.39225*u_3*cos(theta_1)*cos(theta_2)*sin(theta_3) + 0.39225*u_3*cos(theta_1)*cos(theta_3)*sin(theta_2) - 0.39225*u_1*sin(theta_1)*sin(theta_2)*sin(theta_3) - 0.0823*u_5*cos(theta_2 + theta_3 + theta_4)*cos(theta_1)*cos(theta_5) + 0.0823*u_1*cos(theta_2 + theta_3 + theta_4)*sin(theta_1)*sin(theta_5) + 0.0823*u_2*sin(theta_2 + theta_3 + theta_4)*cos(theta_1)*sin(theta_5) + 0.0823*u_3*sin(theta_2 + theta_3 + theta_4)*cos(theta_1)*sin(theta_5) + 0.0823*u_4*sin(theta_2 + theta_3 + theta_4)*cos(theta_1)*sin(theta_5);
+    A(20) = 0.05915*u_1*sin(theta_1) - 0.425*u_1*cos(theta_1)*cos(theta_2) + 0.0823*u_1*cos(theta_5)*sin(theta_1) + 0.0823*u_5*cos(theta_1)*sin(theta_5) + 0.425*u_2*sin(theta_1)*sin(theta_2) + 0.09465*u_1*cos(theta_2 + theta_3)*cos(theta_1)*sin(theta_4) + 0.09465*u_1*sin(theta_2 + theta_3)*cos(theta_1)*cos(theta_4) + 0.09465*u_2*cos(theta_2 + theta_3)*cos(theta_4)*sin(theta_1) + 0.09465*u_3*cos(theta_2 + theta_3)*cos(theta_4)*sin(theta_1) + 0.09465*u_4*cos(theta_2 + theta_3)*cos(theta_4)*sin(theta_1) - 0.39225*u_1*cos(theta_1)*cos(theta_2)*cos(theta_3) - 0.09465*u_2*sin(theta_2 + theta_3)*sin(theta_1)*sin(theta_4) - 0.09465*u_3*sin(theta_2 + theta_3)*sin(theta_1)*sin(theta_4) - 0.09465*u_4*sin(theta_2 + theta_3)*sin(theta_1)*sin(theta_4) + 0.39225*u_1*cos(theta_1)*sin(theta_2)*sin(theta_3) + 0.39225*u_2*cos(theta_2)*sin(theta_1)*sin(theta_3) + 0.39225*u_2*cos(theta_3)*sin(theta_1)*sin(theta_2) + 0.39225*u_3*cos(theta_2)*sin(theta_1)*sin(theta_3) + 0.39225*u_3*cos(theta_3)*sin(theta_1)*sin(theta_2) - 0.0823*u_1*cos(theta_2 + theta_3 + theta_4)*cos(theta_1)*sin(theta_5) - 0.0823*u_5*cos(theta_2 + theta_3 + theta_4)*cos(theta_5)*sin(theta_1) + 0.0823*u_2*sin(theta_2 + theta_3 + theta_4)*sin(theta_1)*sin(theta_5) + 0.0823*u_3*sin(theta_2 + theta_3 + theta_4)*sin(theta_1)*sin(theta_5) + 0.0823*u_4*sin(theta_2 + theta_3 + theta_4)*sin(theta_1)*sin(theta_5);
+    A(21) = u_4*(0.09465*sin(theta_2 + theta_3 + theta_4) - 0.0823*cos(theta_2 + theta_3 + theta_4)*sin(theta_5)) - 1.0*u_3*(0.39225*cos(theta_2 + theta_3) - 0.09465*sin(theta_2 + theta_3 + theta_4) + 0.0823*cos(theta_2 + theta_3 + theta_4)*sin(theta_5)) - 1.0*u_2*(0.39225*cos(theta_2 + theta_3) + 0.425*cos(theta_2) - 0.09465*cos(theta_2 + theta_3)*sin(theta_4) - 0.09465*sin(theta_2 + theta_3)*cos(theta_4) + 0.0823*cos(theta_2 + theta_3)*cos(theta_4)*sin(theta_5) - 0.0823*sin(theta_2 + theta_3)*sin(theta_4)*sin(theta_5)) - 0.0823*u_5*sin(theta_2 + theta_3 + theta_4)*cos(theta_5);
 end

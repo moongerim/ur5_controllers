@@ -295,11 +295,11 @@ if __name__ == '__main__':
     network_log = 'net_log.csv'
 
     # Change filename here:
-    filename = 'data_to_B'
+    filename = 'data_to_A'
     if filename =='data_to_A':
-        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220424_101739'
-        train_files = 4904
-        eval_files = 619
+        direction = '/home/robot/workspaces/Big_Data/mpc_log/20220415_143814'
+        train_files = 4811
+        eval_files = 917
         test_file = 'data_to_A_test_5.csv'
     if filename =='data_to_B':
         direction = '/home/robot/workspaces/Big_Data/mpc_log/20220423_163003'

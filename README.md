@@ -16,7 +16,7 @@ install `ursim-3.6.1.30595`
 3. rosrun human_vrep human_sim
 4. rosrun human_vrep test_human.py
 5. rosrun mpc_low move_low
-6. rosrun mpc_low one_way.py
+6. rosrun mpc_low mpc_urscript.py
 7. rosrun mpc_high move_high
 
 ## Pytorch train:

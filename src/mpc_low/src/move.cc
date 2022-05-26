@@ -76,7 +76,7 @@ class GoalFollower
     ros::Publisher info_pub;
     double robot_spheres[7] = {0.15, 0.15, 0.15, 0.08, 0.08, 0.12, 0.1};
 
-    double human_sphere[57]= {10.0517,   0.5220,   1.0895,   0.1500,
+    double human_sphere[58]= {10.0517,   0.5220,   1.0895,   0.1500,
                               10.0658,   0.4526,   0.8624,   0.2500,
                               10.0844,   0.7044,   0.9207,   0.1500,
                               10.2083,   0.3075,   1.0208,   0.1500,
@@ -90,7 +90,7 @@ class GoalFollower
                              -10.0998,   0.3062,   0.5387,   0.1300,
                               10.1908,   0.5290,   1.0016,   0.2000,
                               10.2106,   0.4602,   0.6915,   0.2500,
-                              0};
+                              0, 0};
 
     double goal[6] = {0.0000, -1.57, 0.0000, -1.57, 0.0000, 0.0000};
     double goal_queue[120] = {0.0000, -1.57, 0.0000, -1.57, 0.0000, 0.0000, 
@@ -123,7 +123,7 @@ class GoalFollower
     // Member Functions() 
     void change_obstacles_msg(const std_msgs::Float64MultiArray obstacle_data) 
     { 
-      for (int i=0; i<57; i++)   
+      for (int i=0; i<58; i++)   
       {
         human_sphere[i] = obstacle_data.data[i];
         // printf("human %i = %f\n", i, human_sphere[i]);
@@ -227,12 +227,12 @@ int main(int argc, char **argv)
   int fileseq=0;
   string filename;
   clock_t begin = clock();
-
+  double time_spent_mpc = 0;
   while (ros::ok())
   {
     printf("max diff=%f\n",my_follower.from_high[30]);
-    if(my_follower.from_high[30]<0.001){
-      // if(my_follower.from_high[30]<0.02){
+    // if(my_follower.from_high[30]<0.001){
+      if(my_follower.from_high[30]<0.02){
         printf("------------------Arrived---------------------\n");
         // std_msgs::Float64MultiArray init_data;
         // init_data.data.clear();
@@ -306,7 +306,10 @@ int main(int argc, char **argv)
       for (int i = 0; i < 3; i++) currentState_targetValue[i+68] = my_follower.from_high[24+i];
       // msg.data = 1;
       // PauseLow.publish(msg);
+      clock_t begin_mpc = clock();
       solutions = myMpcSolver.solve_mpc(currentState_targetValue, tracking_goal);
+      clock_t end_mpc = clock();
+      double time_spent_mpc = (double)(end_mpc - begin_mpc) / CLOCKS_PER_SEC;
       // msg.data = 0;
       // PauseLow.publish(msg);
     } else for (int i=0; i<8; i++) solutions[i] = 0;
@@ -387,6 +390,8 @@ int main(int argc, char **argv)
     whole_data.data.push_back(time_spent);
     for (int i = 0; i < 7; i++) whole_data.data.push_back(ctv_linear[i]);
     whole_data.data.push_back(my_follower.from_high[30]);
+    whole_data.data.push_back(my_follower.human_sphere[57]);
+    whole_data.data.push_back(time_spent_mpc);
     my_follower.SendInfo(whole_data);
 
     ros::spinOnce();

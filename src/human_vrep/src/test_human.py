@@ -73,9 +73,15 @@ pos.append(pos_195)
 splited_data=[]
 for k in range (len(pos)):
     temp = pos[k]
-    rep=int(len(temp)/6000)
+    rep=int(len(temp)/10000)
     for i in range(rep):
-        splited_data.append(temp[i*6000:i*6000+6000])
+        splited_data.append([temp[i*10000:i*10000+10000],k,i*10000])
+
+# for k in range (len(pos)):
+#     temp = pos[k]
+#     for i in range(7):
+#         splited_data.append([temp[i*1000:i*1000+10000],k,i*1000])
+
 print(len(pos),len(splited_data))
 human_spheres = rospy.Publisher('/Obstacle/human_spheres', Float64MultiArray, queue_size=1)
 
@@ -94,9 +100,10 @@ class ENV:
     def check_condition(self):
         return [int(self.condition_h[0]),self.condition_h[1]]
 
-    def step(self,i,data_part,file_number,distance):
+    def step(self,i,data_part,file_number,distance,file_n,file_start):
+        # print(data_part,file_n,file_start)
         k=file_number
-        point_array = [0]*463
+        point_array = [0]*465
         for a in range(14):
             point_array[3*a] = (data_part[file_number+i][3*a])+distance
             point_array[3*a+1] = (data_part[file_number+i][3*a+1])+distance
@@ -107,6 +114,8 @@ class ENV:
                 point_array[f*42+43+3*a] = (data_part[file_number+i][3*a])+distance
                 point_array[f*42+43+3*a+1] = (data_part[file_number+i][3*a+1])+distance
                 point_array[f*42+43+3*a+2] = (data_part[file_number+i][3*a+2])
+        point_array[463] = file_n
+        point_array[464] = file_start
         obstacle_data = Float64MultiArray()
         obstacle_data.data = point_array
         self.pub.publish(obstacle_data)
@@ -118,6 +127,7 @@ if __name__ == '__main__':
     cond_temp=0
     rate = rospy.Rate(250) #hz
     msg = rospy.wait_for_message("/flag", Float64MultiArray)
+    # msg = True
     if(msg):
         while not rospy.is_shutdown():
             condition_h = env.check_condition()
@@ -125,8 +135,10 @@ if __name__ == '__main__':
                 time.sleep(0.02)
                 i=0
             else:
-                temp = splited_data[condition_h[0]]
-                env.step(i,temp,condition_h[0],1.0)
+                temp = splited_data[condition_h[0]][0]
+                file_n = splited_data[condition_h[0]][1]
+                file_start = splited_data[condition_h[0]][2]
+                env.step(i,temp,condition_h[0],1.0,file_n,file_start)
                 print(condition_h,i)
                 i+=1
             rate.sleep()

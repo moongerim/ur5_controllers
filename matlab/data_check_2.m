@@ -11,13 +11,22 @@ iter_BA_train = 1;
 iter_BA_test = 1;
 init_poses = zeros(file_n-1,6);
 goal_poses = zeros(file_n-1,6);
-
+human_numbers = zeros(1,195);
+human_numbers_ind = [1:1:195];
+human_numbers_ts = zeros(1,195);
 for i=2:file_n
     filename = sprintf('%i.mat',i);
     load(filename);
     init_poses(i-1,:)=joint_positions(1,:);
     goal_poses(i-1,:)=from_high_controller(2,19:24);
     e = length(joint_positions);
+    for ff=1:195
+        if file_n(1)==human_numbers_ind(ff)
+            human_numbers(ff) = human_numbers(ff)+1;
+            human_numbers_ts(ff)= human_numbers_ts(ff)+e;
+        break
+        end
+    end
     data_to_A = zeros(e,54);
     data_to_B = zeros(e,54);
     if from_high_controller(2,19)==3.0
@@ -60,6 +69,20 @@ for i=2:file_n
     end
 end
 
+human_1 = sum(human_numbers_ts(1:15))
+human_2 = sum(human_numbers_ts(16:30))
+human_3 = sum(human_numbers_ts(31:45))
+human_4 = sum(human_numbers_ts(46:60))
+human_5 = sum(human_numbers_ts(61:75))
+human_6 = sum(human_numbers_ts(76:90))
+human_7 = sum(human_numbers_ts(91:105))
+human_8 = sum(human_numbers_ts(106:120))
+human_9 = sum(human_numbers_ts(121:135))
+human_10 = sum(human_numbers_ts(136:150))
+human_11 = sum(human_numbers_ts(151:165))
+human_12 = sum(human_numbers_ts(166:180))
+human_13 = sum(human_numbers_ts(181:195))
+
 %%
 close all;
 clear all;
@@ -74,13 +97,24 @@ iter_BA_train = 1;
 iter_BA_test = 1;
 init_poses = zeros(file_n-1,6);
 goal_poses = zeros(file_n-1,6);
-
+human_numbers = zeros(1,195);
+human_numbers_ind = [1:1:195];
+human_numbers_ts = zeros(1,195);
 for i=2:file_n
     filename = sprintf('%i.mat',i);
     load(filename);
     init_poses(i-1,:)=joint_positions(1,:);
     goal_poses(i-1,:)=from_high_controller(2,19:24);
+    
     e = length(joint_positions);
+    for ff=1:195
+        if file_n(1)==human_numbers_ind(ff)
+            human_numbers(ff) = human_numbers(ff)+1;
+            human_numbers_ts(ff)= human_numbers_ts(ff)+e;
+        break
+        end
+    end
+    
     data_to_A = zeros(e,54);
     data_to_B = zeros(e,54);
     if from_high_controller(2,19)==3.0
@@ -122,3 +156,18 @@ for i=2:file_n
         writetable(T,new_filename);
     end
 end
+
+human_1 = sum(human_numbers_ts(1:15))
+human_2 = sum(human_numbers_ts(16:30))
+human_3 = sum(human_numbers_ts(31:45))
+human_4 = sum(human_numbers_ts(46:60))
+human_5 = sum(human_numbers_ts(61:75))
+human_6 = sum(human_numbers_ts(76:90))
+human_7 = sum(human_numbers_ts(91:105))
+human_8 = sum(human_numbers_ts(106:120))
+human_9 = sum(human_numbers_ts(121:135))
+human_10 = sum(human_numbers_ts(136:150))
+human_11 = sum(human_numbers_ts(151:165))
+human_12 = sum(human_numbers_ts(166:180))
+human_13 = sum(human_numbers_ts(181:195))
+

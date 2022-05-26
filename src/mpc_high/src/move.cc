@@ -272,7 +272,7 @@ int main(int argc, char **argv)
     start_motion_time = big_loop_iteration*0.5 + 4.0;
     stop_human_time = big_loop_iteration*(loop_duration*2) + (loop_duration*2);
   //   //** Low level Loop      
-    int row_index = 1;
+    int row_index = 0;
     double loop_start_time = 0;
 	  
 	  ros::Rate goto_loop(20);
@@ -363,8 +363,9 @@ int main(int argc, char **argv)
           max_diff = abs(currentState_targetValue[i] - currentState_targetValue[i+6]); 
         }
       }
-      if (max_diff < 0.001) {
-        // row_index = (row_index+1)%2;
+      // if (max_diff < 0.001) {
+        if (max_diff < 0.02) {
+        row_index = (row_index+1)%2;
         clock_t end = clock();
         double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
         printf("Arrived in %f sec\n", time_spent-1);

@@ -12,7 +12,7 @@ class ENV:
     def __init__(self,run_name):
         rospy.Subscriber('/info', Float64MultiArray, self.callback)
         self.pub = rospy.Publisher('/ur_driver/URScript', String, queue_size=1)
-        self.flag_pub = rospy.Publisher('/flag', String, queue_size=1)
+        self.flag_pub = rospy.Publisher('/flag', Float64MultiArray, queue_size=1)
         self.run_name = run_name
         self.A = [0.0, -2.3, -1.1, -1.2, -1.2, 0.5]
         self.B = [3.0, -1.6, -1.7, -1.7, -1.7, 1.0]
@@ -20,11 +20,12 @@ class ENV:
         self.goal = self.B
         self.i = 0
         self.first = 0
+        self.hello_str=[-1,0]
         self.init_log_variables()
         self.total = 0
         
     def callback(self, data):
-        self.observation = data.data[0:167]
+        self.observation = data.data[0:169]
 
     def done(self):
         arrive = False
@@ -61,33 +62,37 @@ class ENV:
         # self.time.append(self.observation[158])
         self.ctv_linear.append(self.observation[159:166])
         self.max_diff = self.observation[166]
+        self.file_start.append(self.observation[167])
+        self.mpc_solve_time.append(self.observation[168])
         self.time.append(elapsed_time)
     
     def reset(self): 
         print("reset")
         if self.first<1:
             self.first+=1
-            self.threshold = 0.001
+            self.threshold = 0.02
             self.init_log_variables()
             self.t_total = time.time()
         else:
-            hello_str = "stop_human"
-            self.flag_pub.publish(hello_str)
-            # time.sleep(1)
-
-            self.save_log(self.i)
+            time.sleep(0.5)
+            if self.i%2==0:
+                self.hello_str[1] = 1
+                pub_data = Float64MultiArray()
+                pub_data.data = self.hello_str
+                self.flag_pub.publish(pub_data)
+                time.sleep(1)
+                self.save_log(self.i)
+                self.init_log_variables()
+                self.hello_str[0]+= 1
+                self.hello_str[1] = 0
+                pub_data.data = self.hello_str
+                self.flag_pub.publish(pub_data)
+                time.sleep(1)
             self.i+=1
-            self.init_log_variables()
-
-            # set_init_pose(self.goal[0:6], 4)
-            self.threshold = 0.001
-            time.sleep(1)
-            hello_str = "start_human"
-            self.flag_pub.publish(hello_str)
         self.step()
     
     def init_log_variables(self):
-        self.observation = [1]*167
+        self.observation = [1]*169
         self.ctp = []
         self.human_poses = []
         self.joint_poses = []
@@ -101,10 +106,12 @@ class ENV:
         self.ctv = []
         self.lin_vel_limit = []
         self.file_n=[]
+        self.file_start = []
         self.time = []
         self.ctv_linear = []
         self.arrive = False
         self.diff = 10
+        self.mpc_solve_time = []
         
     def save_log(self,save_iter):
         rec_dir = '/home/robot/workspaces/Big_Data/'
@@ -124,7 +131,9 @@ class ENV:
                         'ctv': self.ctv,
                         'lin_vel_limit': self.lin_vel_limit,
                         'file_n':self.file_n,
+                        'file_start':self.file_start,
                         'time':self.time,
+                        'mpc_solve_time':self.mpc_solve_time,
                         'ctv_linear': self.ctv_linear},
                         str(save_iter))    
 

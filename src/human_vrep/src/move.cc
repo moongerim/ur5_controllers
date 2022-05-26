@@ -3,9 +3,9 @@
 #include "std_msgs/Float64MultiArray.h"
 #include <math.h>
 #include <sensor_msgs/JointState.h>
-float point_array_temp[57];
+float point_array_temp[58];
 float point_array_temp_high[560];
-float point_array[57];
+float point_array[58];
 float point_array_high[560];
 double from_high[31] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10};
 float sphere_radi[14]={0.5510,0.6010,0.5010,0.5010,0.5010,0.5010,0.5010,0.5010,0.4510,0.4510,0.4810,0.4810,0.5510,0.6010};
@@ -26,7 +26,8 @@ void chatterCallback(const std_msgs::Float64MultiArray msg)
       point_array_temp_high[j*56+i*4+3] = sphere_radi[i];
     }
   }
-  point_array_temp[56] = msg.data[42];
+  point_array_temp[56] = msg.data[463];
+  point_array_temp[57] = msg.data[464];
 }
 double state_feedback_temp[12];
 double state_feedback[12];
@@ -61,6 +62,8 @@ int main(int argc, char **argv)
     }
     
     point_array[56]=point_array_temp[56];
+    point_array[57]=point_array_temp[57];
+
     for (int j = 0; j<10; j++){
       for (int i = 0; i<14; i++) {
         point_array_high[j*56+i*4] = point_array_temp_high[j*56+i*4]; // x offset
@@ -73,7 +76,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < 12; ++i) state_feedback[i] = state_feedback_temp[i];
     std_msgs::Float64MultiArray obstacle_data;
     obstacle_data.data.clear();
-    for (int i = 0; i < 57; i++){
+    for (int i = 0; i < 58; i++){
       obstacle_data.data.push_back(point_array[i]);
     } 
     chatter_low.publish(obstacle_data);
